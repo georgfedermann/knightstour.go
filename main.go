@@ -60,7 +60,7 @@ func warndorffSortByAccessibility(moves [8]KnightMove, currentBoard Board, pos P
 	for _, move := range moves {
 		isValid, newPos := isMoveValid(pos, move, currentBoard)
 		if isValid {
-			accessibilityCount := heuristics[newPos.X][newPos.Y]
+			accessibilityCount := heuristics[newPos.Y][newPos.X]
 			results[accessibilityCount] = append(results[accessibilityCount], move)
 		}
 	}
@@ -74,23 +74,23 @@ func warndorffSortByAccessibility(moves [8]KnightMove, currentBoard Board, pos P
 }
 
 func applyMove(position Position, move KnightMove) Position {
-    return Position{X: position.X + move.Dx, Y: position.Y + move.Dy}
+	return Position{X: position.X + move.Dx, Y: position.Y + move.Dy}
 }
 
 func findPath(currentBoard Board, currentPosition Position, moveNumber int) []Position {
-    currentBoard[currentPosition.Y][currentPosition.X] = moveNumber
-    heuristics := calculateHeuristics(currentBoard)
-    fmt.Printf("Move %d\n", moveNumber)
-    printBoards(currentBoard, heuristics)
+	currentBoard[currentPosition.Y][currentPosition.X] = moveNumber
+	heuristics := calculateHeuristics(currentBoard)
+	fmt.Printf("Move %d\n", moveNumber)
+	printBoards(currentBoard, heuristics)
 
 	if moveNumber == 64 {
 		return []Position{currentPosition}
 	} else {
 		for _, move := range warndorffSortByAccessibility(KnightMoves, currentBoard, currentPosition) {
-            subPath := findPath(currentBoard, applyMove(currentPosition, move), moveNumber + 1)
-            if len(subPath) > 0 {
-                return append([]Position{currentPosition}, subPath...)
-            }
+			subPath := findPath(currentBoard, applyMove(currentPosition, move), moveNumber+1)
+			if len(subPath) > 0 {
+				return append([]Position{currentPosition}, subPath...)
+			}
 		}
 	}
 	return []Position{}
@@ -104,6 +104,7 @@ func main() {
 	fmt.Println(KnightMoves)
 	fmt.Println(len(KnightMoves))
 	fmt.Println(warndorffSortByAccessibility(KnightMoves, board, Position{X: 1, Y: 2}))
-    fmt.Println()
-    findPath(board, Position{X: 0, Y: 0}, 1)
+	fmt.Println()
+    path := findPath(board, Position{X: 0, Y: 0}, 1)
+    fmt.Println(path)
 }
